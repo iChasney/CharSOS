@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Char SOS — Timeline Editor v4</title>
+  <link rel="icon" href="assets/images/char-sos-logo.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script> tailwind.config = { theme: { extend: { colors: { aqua: '#7fdde9' }}}}; </script>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&family=Anton&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; } body { font-family: Heebo, system-ui, -apple-system, Segoe UI, Roboto; }
+    @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; } }
+    .dragging { opacity: .5; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <header class="sticky top-0 z-30 bg-slate-950/80 backdrop-blur border-b border-slate-800 pt-[env(safe-area-inset-top)]">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center gap-3">
+      <img src="assets/images/char-sos-logo.svg" class="w-9 h-9" alt="Char SOS" loading="lazy">
+      <div class="flex-1">
+        <h1 class="text-lg md:text-xl font-extrabold tracking-wide" style="font-family: Anton, sans-serif;">Timeline Editor v4</h1>
+        <p class="text-xs text-slate-400">Import from file, save drafts to browser, export back to JSON. Includes drag-to-reorder + photo URL helper.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+    <!-- Import / Save / Export -->
+    <section class="grid md:grid-cols-2 gap-4">
+      <div class="p-4 rounded-xl border border-slate-800 bg-slate-900/50">
+        <h2 class="font-bold text-aqua mb-2">Import</h2>
+        <div>
+          <label class="block text-sm mb-1">Choose a vehicles.json file</label>
+          <input id="fileInput" type="file" accept=".json" class="block w-full text-sm file:mr-3 file:px-4 file:py-3 md:file:py-2 file:rounded file:border-0 file:bg-aqua file:text-slate-900 file:font-semibold">
+          <p class="text-xs text-slate-400 mt-2">Tip: load your live JSON from S3 here.</p>
+        </div>
+      </div>
+      <div class="p-4 rounded-xl border border-slate-800 bg-slate-900/50">
+        <h2 class="font-bold text-aqua mb-2">Save / Export</h2>
+        <div class="flex flex-col sm:flex-row flex-wrap gap-2">
+          <button id="saveLocal" class="px-4 py-3 md:py-2 rounded bg-slate-800 border border-slate-700 hover:border-aqua">Save to browser</button>
+          <button id="downloadJson" class="px-4 py-3 md:py-2 rounded bg-aqua text-slate-900 font-semibold">Download JSON</button>
+          <button id="copyJson" class="px-4 py-3 md:py-2 rounded bg-slate-800 border border-slate-700 hover:border-aqua">Copy JSON</button>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">“Save to browser” keeps a draft in this browser even if you don’t download.</p>
+      </div>
+    </section>
+
+    <!-- Drag-to-reorder vehicles -->
+    <section class="p-4 rounded-xl border border-slate-800 bg-slate-900/50">
+      <div class="flex items-center justify-between mb-3 gap-2">
+        <h2 class="font-bold text-aqua">Vehicle order (drag rows)</h2>
+        <button id="applyOrder" class="px-4 py-3 md:py-2 rounded bg-aqua text-slate-900 font-semibold">Apply & Save order</button>
+      </div>
+      <div class="text-xs text-slate-400 mb-2">Drag rows to set display order. Lowest numbers appear first.</div>
+      <ul id="orderList" class="divide-y divide-slate-800 rounded-lg border border-slate-800"></ul>
+    </section>
+
+    <!-- Vehicle meta -->
+    <section class="p-4 rounded-xl border border-slate-800 bg-slate-900/50">
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-3 md:items-end">
+        <div class="md:col-span-2">
+          <label class="block text-sm mb-1">Vehicle</label>
+          <select id="vehicleSelect" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700"></select>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm mb-1">Name (make & model)</label>
+          <input id="nameInput" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700">
+        </div>
+        <div class="md:col-span-1">
+          <label class="block text-sm mb-1">Nickname</label>
+          <input id="nicknameInput" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700">
+        </div>
+        <div class="md:col-span-1">
+          <label class="block text-sm mb-1">Order</label>
+          <input id="orderInput" type="number" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm mb-1">Photo URL</label>
+          <input id="photoInput" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm mb-1">Status</label>
+          <input id="statusInput" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm mb-1">Next Fix</label>
+          <input id="nextFixInput" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700">
+        </div>
+        <div class="md:col-span-1">
+          <label class="block text-sm mb-1">% Complete</label>
+          <input id="percentInput" type="number" min="0" max="100" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700">
+        </div>
+        <div class="md:col-span-1 flex items-center gap-4">
+          <label class="inline-flex items-center gap-2"><input id="flagFocus" type="checkbox"> <span>Focus</span></label>
+          <label class="inline-flex items-center gap-2"><input id="flagNext" type="checkbox"> <span>Next Up</span></label>
+        </div>
+        <button id="saveMeta" class="px-4 py-3 md:py-2 rounded bg-aqua text-slate-900 font-semibold md:col-span-6">Save Details</button>
+      </div>
+    </section>
+
+    <!-- Timeline editor -->
+    <section class="p-4 rounded-xl border border-slate-800 bg-slate-900/50">
+      <div class="flex items-center justify-between mb-3 gap-2">
+        <h2 class="font-bold text-aqua">Timeline</h2>
+        <button id="addEntry" class="px-4 py-3 md:py-2 rounded bg-slate-800 border border-slate-700 hover:border-aqua">+ Add Entry</button>
+      </div>
+      <div id="timelineList" class="space-y-2"></div>
+    </section>
+
+    <!-- Completed Fixes editor -->
+    <section class="p-4 rounded-xl border border-slate-800 bg-slate-900/50">
+      <div class="flex items-center justify-between mb-3 gap-2">
+        <h2 class="font-bold text-aqua">Completed Fixes</h2>
+        <button id="addFix" class="px-4 py-3 md:py-2 rounded bg-slate-800 border border-slate-700 hover:border-aqua">+ Add Fix</button>
+      </div>
+      <div id="fixesList" class="space-y-2"></div>
+    </section>
+
+    <!-- Photo uploader stub -->
+    <section class="p-4 rounded-xl border border-slate-800 bg-slate-900/50">
+      <h2 class="font-bold text-aqua mb-2">Photo uploader helper (stub)</h2>
+      <p class="text-xs text-slate-400 mb-3">Choose files and I’ll generate target URLs into the selected timeline entry or completed fix. Upload the files to your CDN/S3 separately.</p>
+      <div class="grid md:grid-cols-3 gap-3 items-end">
+        <div>
+          <label class="block text-sm mb-1">CDN base URL (saved)</label>
+          <input id="cdnBase" placeholder="https://cdn.example.com/chars-cars" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700">
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Target</label>
+          <select id="uploadTarget" class="w-full px-3 py-3 md:py-2 rounded bg-slate-900 border border-slate-700">
+            <option value="timeline">Selected timeline entry</option>
+            <option value="fixes">Completed fixes (create new)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Files</label>
+          <input id="filePicker" type="file" accept="image/*" multiple class="w-full">
+        </div>
+      </div>
+      <div class="mt-3 flex gap-2">
+        <button id="genUrls" class="px-4 py-3 md:py-2 rounded bg-aqua text-slate-900 font-semibold">Generate & Insert URLs</button>
+        <button id="copyUrls" class="px-4 py-3 md:py-2 rounded bg-slate-800 border border-slate-700 hover:border-aqua">Copy last generated URLs</button>
+      </div>
+      <textarea id="generatedUrls" class="mt-3 w-full h-28 p-3 rounded bg-slate-950 border border-slate-800 font-mono text-sm" placeholder="Generated URLs will appear here..."></textarea>
+      <div class="text-xs text-slate-400 mt-2">Tip: Upload to S3 with: <code>aws s3 cp ./photos s3://YOUR-BUCKET/chars-cars/ --recursive --cache-control max-age=31536000,public</code></div>
+    </section>
+
+    <!-- Raw JSON preview -->
+    <section class="p-4 rounded-xl border border-slate-800 bg-slate-900/50">
+      <div class="flex items-center justify-between">
+        <h2 class="font-bold text-aqua">JSON Preview</h2>
+        <span id="statusMsg" class="text-xs text-slate-400"></span>
+      </div>
+      <textarea id="jsonPreview" class="mt-2 w-full h-64 p-3 rounded bg-slate-950 border border-slate-800 font-mono text-sm" placeholder="Load a JSON file to begin, or add a vehicle below."></textarea>
+    </section>
+  </main>
+
+  <script src="scripts/editor.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Char SOS — Chars Cars</title>
+  <link rel="icon" href="assets/images/char-sos-logo.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { aqua: '#7fdde9' },
+          boxShadow: { glow: '0 0 0 2px rgba(127,221,233,0.35), 0 10px 25px rgba(0,0,0,0.35)' },
+        }
+      }
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&family=Anton&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: Heebo, system-ui, -apple-system, Segoe UI, Roboto; }
+    .glass { background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(8px); }
+    .badge { display:inline-flex; align-items:center; gap:0.25rem; border-radius:9999px; padding:0.125rem 0.5rem; font-size:0.75rem; font-weight:600; }
+    .step { position: relative; padding-left: 1.25rem; }
+    .step::before { content: ""; position: absolute; left: 0; top: 0.35rem; width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: #7fdde9; box-shadow: 0 0 0 3px rgba(127,221,233,0.25); }
+    @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <header class="sticky top-0 z-30 bg-slate-950/80 backdrop-blur border-b border-slate-800 pt-[env(safe-area-inset-top)]">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+      <img src="assets/images/char-sos-logo.svg" alt="Char SOS" class="w-10 h-10">
+      <div class="flex-1">
+        <h1 class="text-lg md:text-2xl font-extrabold tracking-wide" style="font-family: Anton, sans-serif;">Char SOS</h1>
+        <p class="text-xs md:text-sm text-slate-400">Restoring the classics, one bolt at a time</p>
+      </div>
+      <a href="#gallery" class="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-700 hover:border-aqua text-slate-200 hover:text-white transition">
+        <span>Gallery</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="border-t border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row gap-3 md:items-center">
+        <div class="flex-1 flex gap-2">
+          <input id="searchInput" type="search" placeholder="Search vehicles, nicknames or tags…"
+            class="w-full md:max-w-md px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-aqua/60">
+          <select id="statusFilter" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-aqua/60">
+            <option value="all">All statuses</option>
+            <option value="inprogress">In progress</option>
+            <option value="completed">Has completed fixes</option>
+            <option value="pending">Pending / awaiting</option>
+          </select>
+          <select id="sortBy" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-aqua/60">
+            <option value="order">Sort: Custom order</option>
+            <option value="name">Sort: Name</option>
+            <option value="progress">Sort: Progress</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="max-w-7xl mx-auto px-4 mt-6 grid md:grid-cols-2 gap-4">
+    <div class="glass rounded-2xl p-5 border border-slate-800">
+      <h2 class="text-lg font-bold text-aqua">Current Focus</h2>
+      <p id="focusText" class="text-xl mt-1">Loading…</p>
+      <div class="mt-3 h-2 bg-slate-800 rounded">
+        <div id="focusProgress" class="h-2 bg-aqua rounded" style="width: 0%;"></div>
+      </div>
+    </div>
+    <div class="glass rounded-2xl p-5 border border-slate-800">
+      <h2 class="text-lg font-bold text-aqua">Next Up</h2>
+      <p id="nextUpText" class="text-xl mt-1">Loading…</p>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div id="vehicles" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </main>
+
+  <section id="gallery" class="max-w-7xl mx-auto px-4 pb-16">
+    <h2 class="text-2xl font-extrabold mb-4 text-aqua">🎉 Completed Fixes Gallery</h2>
+    <div id="galleryImages" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+  </section>
+
+  <!-- Lightbox Modal with caption, link, and prev/next -->
+  <div id="lightbox" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
+    <button id="lightboxClose" class="absolute top-4 right-4 px-3 py-1 rounded bg-slate-800 border border-slate-600 text-slate-100">Close</button>
+    <figure class="max-w-[92vw] text-center">
+      <img id="lightboxImg" src="" alt="Preview" class="max-h-[70vh] max-w-[92vw] rounded-lg shadow-2xl mx-auto">
+      <figcaption id="lightboxCaption" class="text-sm text-slate-200 mt-3"></figcaption>
+      <div class="mt-2 flex items-center justify-center gap-3">
+        <button id="lightboxPrev" class="px-3 py-1 rounded bg-slate-800 border border-slate-600 text-slate-100">◀ Prev</button>
+        <a id="lightboxLink" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-3 py-2 rounded bg-aqua text-slate-900 font-semibold hidden">
+          Open link
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <button id="lightboxNext" class="px-3 py-1 rounded bg-slate-800 border border-slate-600 text-slate-100">Next ▶</button>
+      </div>
+      <div id="lightboxIndex" class="text-xs text-slate-400 mt-1"></div>
+    </figure>
+  </div>
+
+  <script src="scripts/app.js"></script>
+</body>
+</html>

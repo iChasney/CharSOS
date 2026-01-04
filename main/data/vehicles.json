@@ -1,0 +1,411 @@
+[
+  {
+    "id": "mini",
+    "order": 1,
+    "name": "Mini Cooper S",
+    "nickname": "Poppy",
+    "photo": "assets/images/poppy/cover.jpg",
+    "status": "Running with MOT",
+    "percentComplete": 90,
+    "nextFix": "Swap rear subframe",
+    "tags": [
+      "mini",
+      "engine",
+      "subframe",
+      "clutch",
+      "timing",
+      "rebuild"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [
+      {
+        "date": "2025-08-03",
+        "event": "Restoration Completed"
+      },
+      {
+        "date": "2024-11-10",
+        "event": "Engine removed and teardown started"
+      }
+    ],
+    "completedFixes": []
+  },
+  {
+    "id": "landrover",
+    "order": 2,
+    "name": "Land Rover Discovery 3",
+    "nickname": "Linda",
+    "photo": "assets/images/linda/cover.jpg",
+    "status": "Running with MOT",
+    "percentComplete": 80,
+    "nextFix": "Change anti roll bar drop links",
+    "tags": [
+      "electrics",
+      "landrover",
+      "gearshift",
+      "suspension"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": true
+    },
+    "history": [
+      {
+        "date": "2025-02-27",
+        "event": "Purchased",
+        "images": [
+          "assets/images/linda/27-02-2025-1.jpg"
+        ]
+      },
+      {
+        "date": "2025-03-09",
+        "event": "First attempt to collect",
+        "images": [
+          "assets/images/linda/09-03-2025-1.jpg",
+          "assets/images/linda/09-03-2025-2.jpg",
+          "assets/images/linda/09-03-2025-3.jpg",
+          "assets/images/linda/09-03-2025-4.jpg",
+          "assets/images/linda/09-03-2025-5.jpg",
+          "assets/images/linda/09-03-2025-6.jpg",
+          "assets/images/linda/09-03-2025-7.jpg",
+          "assets/images/linda/09-03-2025-8.jpg"
+        ]
+      },
+      {
+        "date": "2025-03-13",
+        "event": "Collected, second attempt",
+        "images": [
+          "assets/images/linda/13-03-2025.jpg"
+        ]
+      },
+      {
+        "date": "2025-04-12",
+        "event": "Replaced the manual gear shift",
+        "images": [
+          "assets/images/linda/12-04-2025-1.jpg",
+          "assets/images/linda/12-04-2025-2.jpg",
+          "assets/images/linda/12-04-2025-3.jpg",
+          "assets/images/linda/12-04-2025-4.jpg",
+          "assets/images/linda/12-04-2025-1.mov"
+        ]
+      },
+      {
+        "date": "2025-04-21",
+        "event": "Repaired the tail gate handle, switch and trim",
+        "images": [
+          "assets/images/linda/03-04-2025-1.jpg",
+          "assets/images/linda/21-04-2025-1.jpg"
+        ]
+      },
+      {
+        "date": "2025-04-02",
+        "event": "Swapped the front suspension and gas block",
+        "images": [
+          "assets/images/linda/02-05-2025-1.jpg",
+          "assets/images/linda/02-05-2025-2.jpg",
+          "assets/images/linda/02-05-2025-3.jpg"
+        ]
+      },
+      {
+        "date": "2025-05-02",
+        "event": "Fixed the fuel flap mechanism",
+        "images": []
+      },
+      {
+        "date": "2025-05-13",
+        "event": "First MOT Passed!"
+      },
+      {
+        "date": "2025-07-30",
+        "event": "Moved to the farm"
+      },
+      {
+        "date": "2025-04-04",
+        "event": "Replace the battery and fixed the bonnet switch",
+        "images": []
+      },
+      {
+        "date": "2025-05-01",
+        "event": "Replaced the rear passenger door actuator",
+        "images": []
+      },
+      {
+        "date": "2025-05-09",
+        "event": "Changed the ripped drivers seat base",
+        "images": [
+          "assets/images/linda/03-05-2025-1.jpg",
+          "assets/images/linda/03-05-2025-2.jpg",
+          "assets/images/linda/03-08-2025-2.jpg",
+          "assets/images/linda/03-08-2025-1.jpg"
+        ]
+      },
+      {
+        "date": "2025-08-13",
+        "event": "Refurbished key remote",
+        "images": []
+      },
+      {
+        "date": "2025-09-20",
+        "event": "Troubleshooting the remote central locking",
+        "images": []
+      },
+      {
+        "date": "2025-09-21",
+        "event": "Replace the fuel flap actuator",
+        "images": []
+      },
+      {
+        "date": "2025-09-22",
+        "event": "Swapped the rear suspension and gas block",
+        "images": [
+          "assets/images/linda/08-09-2025-1.jpg",
+          "assets/images/linda/22-09-2025-1.jpg",
+          "assets/images/linda/22-09-2025-2.jpg",
+          "assets/images/linda/22-09-2025-3.jpg"
+        ]
+      },
+      {
+        "date": "2025-10-11",
+        "event": "Replaced both EGR valves",
+        "images": [
+          "assets/images/linda/11-10-2025-1.jpg",
+          "assets/images/linda/11-10-2025-2.jpg",
+          "assets/images/linda/11-10-2025-3.jpg",
+          "assets/images/linda/11-10-2025-4.jpg"
+        ]
+      },
+      {
+        "date": "2025-11-01",
+        "event": "Front wheel bearing swap",
+        "images": [
+          "assets/images/linda/01-11-2025-1.jpg",
+          "assets/images/linda/01-11-2025-2.jpg"
+        ]
+      }
+    ],
+    "completedFixes": []
+  },
+  {
+    "id": "triumph",
+    "order": 3,
+    "name": "Triumph Dolomite Sprint",
+    "nickname": "Harry",
+    "photo": "assets/images/harry/cover.jpg",
+    "status": "Running",
+    "percentComplete": 80,
+    "nextFix": "Wire up and fit electric fan",
+    "tags": [
+      "clutch slave",
+      "water pump",
+      "electrics"
+    ],
+    "flags": {
+      "focus": true,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  },
+  {
+    "id": "mc-52",
+    "order": 4,
+    "name": "MC-52 Sport 1000 Race Car",
+    "nickname": "",
+    "photo": "assets/images/mc-52/cover.jpg",
+    "status": "In Progress",
+    "percentComplete": 60,
+    "nextFix": "Extending wire harness and wiring fuse box",
+    "tags": [
+      "rebuild",
+      "electrics",
+      "repaint"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  },
+  {
+    "id": "gsxr-750",
+    "order": 5,
+    "name": "Suzuki GSX-R 750",
+    "nickname": "",
+    "photo": "assets/images/gsx-r750/cover.jpg",
+    "status": "Pending",
+    "percentComplete": 0,
+    "nextFix": "Engine rebuild",
+    "tags": [
+      "service",
+      "engine rebuild"
+    ],
+    "history": [],
+    "completedFixes": [],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    }
+  },
+  {
+    "id": "fe-35",
+    "order": 6,
+    "name": "Ferguson FE35 Petrol/TVO",
+    "nickname": "",
+    "photo": "assets/images/fe-35/cover.jpg",
+    "status": "In Progress",
+    "percentComplete": 40,
+    "nextFix": "Making cylinder head studs",
+    "tags": [
+      "rebuild",
+      "engine rebuild",
+      "repaint"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  },
+  {
+    "id": "vivaro",
+    "order": 7,
+    "name": "Vauxhall Vivaro 1.9 CDTI",
+    "nickname": "Vangelina Jolie",
+    "photo": "assets/images/vangelina/cover.jpg",
+    "status": "Running with MOT",
+    "percentComplete": 60,
+    "nextFix": "Fix side door lock",
+    "tags": [
+      "engine rebuild"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  },
+  {
+    "id": "audi-a4-cabriolet",
+    "order": 8,
+    "name": "Audi A4 1.8T Cabriolet",
+    "nickname": "Patch",
+    "photo": "assets/images/audi-a4/cover.jpg",
+    "status": "Running with MOT",
+    "percentComplete": 60,
+    "nextFix": "Fix rear roof starage box",
+    "tags": [
+      "roof",
+      "interior",
+      "repaint"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  },
+  {
+    "id": "blue-fazer",
+    "order": 10,
+    "name": "Yamaha Fazer 600 (Blue)",
+    "nickname": "",
+    "photo": "assets/images/blue-fazer/cover.jpg",
+    "status": "Backlog",
+    "percentComplete": 20,
+    "nextFix": "Engine installation",
+    "tags": [
+      "rebuild"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  },
+  {
+    "id": "red-fazer",
+    "order": 11,
+    "name": "Yamaha Fazer 600",
+    "nickname": "Freddie",
+    "photo": "assets/images/red-fazer/cover.jpg",
+    "status": "Backlog",
+    "percentComplete": 0,
+    "nextFix": "Teardown",
+    "tags": [
+      "rebuild",
+      "repaint"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  },
+  {
+    "id": "zzr600",
+    "order": 12,
+    "name": "Kawasaki ZZR600 Ninja",
+    "nickname": "",
+    "photo": "assets/images/zzr600/cover.jpg",
+    "status": "Backlog",
+    "percentComplete": 20,
+    "nextFix": "Cylinder head gasket",
+    "tags": [
+      "rebuild",
+      "repaint"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  },
+  {
+    "id": "yellow-mini",
+    "order": 9,
+    "name": "Mini Cooper - Yellow",
+    "nickname": "",
+    "photo": "assets/images/yellow-mini/cover.jpg",
+    "status": "Pending",
+    "percentComplete": 0,
+    "nextFix": "Change the clutch",
+    "tags": [
+      "clutch",
+      "flywheel"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  },
+  {
+    "id": "green-dolomite",
+    "order": 13,
+    "name": "Triumph Dolomite 1850",
+    "nickname": "Green Goblin",
+    "photo": "assets/images/green-dolomite/cover.jpg",
+    "status": "Backlog",
+    "percentComplete": 0,
+    "nextFix": "Get running",
+    "tags": [
+      "service"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [],
+    "completedFixes": []
+  }
+]
