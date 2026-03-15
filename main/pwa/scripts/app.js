@@ -174,7 +174,7 @@ function renderTimelineEntry(vehicleId, entryIdx) {
   }
 
   ui.renderTimelineEntry($('app'), v, entryIdx, {
-    cdnBase: '', // Images use relative paths from main site root
+    cdnBase: '..', // PWA is in /pwa/, images are relative to site root
     onSave: (data) => {
       v.history[entryIdx].date = data.date;
       v.history[entryIdx].event = data.event;

@@ -85,7 +85,7 @@ function vehicleCard(v) {
   return `
     <div data-vehicle-id="${v.id}" class="card-press cursor-pointer rounded-xl border ${focusBorder} bg-slate-900/50 p-3 flex gap-3 items-center">
       <div class="w-16 h-16 rounded-lg bg-slate-800 flex-shrink-0 overflow-hidden">
-        ${v.photo ? `<img src="" data-src="${v.photo}" class="w-full h-full object-cover" alt="" onerror="this.style.display='none'">` : ''}
+        ${v.photo ? `<img src="../${v.photo}" class="w-full h-full object-cover" alt="" onerror="this.style.display='none'">` : ''}
       </div>
       <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2">
@@ -122,7 +122,7 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
       <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
         <div class="flex gap-3 items-start">
           <div class="w-20 h-20 rounded-lg bg-slate-800 overflow-hidden flex-shrink-0">
-            ${v.photo ? `<img src="" data-src="${v.photo}" class="w-full h-full object-cover" alt="" onerror="this.style.display='none'">` : ''}
+            ${v.photo ? `<img src="../${v.photo}" class="w-full h-full object-cover" alt="" onerror="this.style.display='none'">` : ''}
           </div>
           <div class="flex-1">
             <h2 class="text-lg font-extrabold" style="font-family: Anton, sans-serif;">${v.name}</h2>
