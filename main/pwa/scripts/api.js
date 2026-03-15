@@ -1,9 +1,5 @@
 // --- API client ---
 
-// Set this to your API Gateway URL, e.g. "https://xxxxx.execute-api.eu-west-1.amazonaws.com"
-// When using CloudFront as proxy, set to "" (empty string) for same-origin
-const API_BASE = localStorage.getItem('charsos_apiBase') || '';
-
 export function setApiBase(url) {
   localStorage.setItem('charsos_apiBase', url.replace(/\/+$/, ''));
 }
@@ -61,14 +57,31 @@ export async function loadVehicles() {
 
 export async function saveVehicles(vehicles) {
   const base = getApiBase();
-  const res = await fetch(`${base}/api/vehicles`, {
-    method: 'PUT',
+
+  // Step 1: Get a pre-signed S3 URL (small request, passes WAF)
+  const urlRes = await fetch(`${base}/api/vehicles/save-url`, {
+    method: 'POST',
     headers: authHeaders(),
+  });
+  if (urlRes.status === 401) { logout(); throw new Error('Session expired'); }
+  if (!urlRes.ok) throw new Error('Failed to get save URL');
+  const { uploadUrl } = await urlRes.json();
+
+  // Step 2: PUT directly to S3 (bypasses CloudFront WAF)
+  const putRes = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(vehicles, null, 2),
   });
-  if (res.status === 401) { logout(); throw new Error('Session expired'); }
-  if (!res.ok) throw new Error('Failed to save');
-  return await res.json();
+  if (!putRes.ok) throw new Error('Failed to upload data');
+
+  // Step 3: Trigger CloudFront invalidation
+  const confirmRes = await fetch(`${base}/api/vehicles/confirm-save`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!confirmRes.ok) throw new Error('Saved but failed to invalidate cache');
+  return await confirmRes.json();
 }
 
 export async function getUploadUrls(vehicleSlug, date, extensions) {

@@ -35,6 +35,8 @@ export async function handler(event) {
 
     if (path === '/api/vehicles' && method === 'GET') return await handleGetVehicles();
     if (path === '/api/vehicles' && method === 'PUT') return await handlePutVehicles(event);
+    if (path === '/api/vehicles/save-url' && method === 'POST') return await handleSaveUrl();
+    if (path === '/api/vehicles/confirm-save' && method === 'POST') return await handleConfirmSave();
     if (path === '/api/upload-urls' && method === 'POST') return await handleUploadUrls(event);
 
     return respond(404, { error: 'Not found' });
@@ -121,6 +123,34 @@ async function handlePutVehicles(event) {
     invalidationId = inv.Invalidation?.Id;
   }
 
+  return respond(200, { ok: true, invalidationId });
+}
+
+// --- Save via pre-signed URL (bypasses CloudFront WAF body limits) ---
+
+async function handleSaveUrl() {
+  const command = new PutObjectCommand({
+    Bucket: BUCKET,
+    Key: VEHICLES_KEY,
+    ContentType: 'application/json',
+    CacheControl: 'no-cache',
+  });
+  const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 900 });
+  return respond(200, { uploadUrl });
+}
+
+async function handleConfirmSave() {
+  let invalidationId = null;
+  if (CF_DIST_ID) {
+    const inv = await cf.send(new CreateInvalidationCommand({
+      DistributionId: CF_DIST_ID,
+      InvalidationBatch: {
+        CallerReference: `vehicles-${Date.now()}`,
+        Paths: { Quantity: 1, Items: ['/data/vehicles.json'] },
+      },
+    }));
+    invalidationId = inv.Invalidation?.Id;
+  }
   return respond(200, { ok: true, invalidationId });
 }
 
