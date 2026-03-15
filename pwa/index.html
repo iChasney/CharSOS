@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#020617">
+  <title>CharSOS Editor</title>
+  <link rel="icon" href="assets/images/char-sos-logo.svg">
+  <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { aqua: '#7fdde9' } } } };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;800&family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/app.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-30 bg-slate-950/80 backdrop-blur border-b border-slate-800">
+    <div class="px-4 py-3 flex items-center gap-3" style="padding-top: max(0.75rem, env(safe-area-inset-top));">
+      <button id="backBtn" class="hidden p-2 -ml-2 rounded-lg hover:bg-slate-800" aria-label="Back">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <img src="assets/images/char-sos-logo.svg" class="w-8 h-8" alt="">
+      <h1 id="headerTitle" class="flex-1 text-lg font-extrabold tracking-wide" style="font-family: Anton, sans-serif;">CharSOS</h1>
+      <button id="saveBtn" class="hidden px-4 py-2 rounded-lg bg-aqua text-slate-900 font-semibold text-sm active:scale-95 transition-transform">Save</button>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main id="app" class="pb-24"></main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Scripts -->
+  <script type="module" src="scripts/utils.js"></script>
+  <script type="module" src="scripts/api.js"></script>
+  <script type="module" src="scripts/ui.js"></script>
+  <script type="module" src="scripts/app.js"></script>
+
+  <!-- Service worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
