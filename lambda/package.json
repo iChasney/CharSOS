@@ -1,0 +1,11 @@
+{
+  "name": "charsos-lambda",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "CharSOS PWA backend - auth, vehicles CRUD, S3 upload URLs",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@aws-sdk/s3-request-presigner": "^3.600.0",
+    "@aws-sdk/client-cloudfront": "^3.600.0"
+  }
+}
