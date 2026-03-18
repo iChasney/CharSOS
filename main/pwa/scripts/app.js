@@ -58,6 +58,10 @@ function router() {
       renderTimelineEntry(parts[1], parseInt(parts[2]));
       break;
 
+    case 'task':
+      renderTaskEdit(parts[1], parseInt(parts[2]));
+      break;
+
     case 'fix':
       renderFixEdit(parts[1], parseInt(parts[2]));
       break;
@@ -109,6 +113,26 @@ function renderVehicleList() {
 
   ui.renderVehicleList($('app'), State.vehicles, {
     onSelect: (id) => { location.hash = `#vehicle/${id}`; },
+    onAddVehicle: () => {
+      const id = 'vehicle-' + Date.now();
+      const newVehicle = {
+        id,
+        order: State.vehicles.length + 1,
+        name: 'New Vehicle',
+        nickname: '',
+        photo: '',
+        status: 'Unknown',
+        percentComplete: 0,
+        nextFix: '',
+        tags: [],
+        flags: { focus: false, nextUp: false },
+        history: [],
+        completedFixes: [],
+      };
+      State.vehicles.push(newVehicle);
+      State.dirty = true;
+      location.hash = `#vehicle/${id}`;
+    },
   });
 }
 
@@ -150,6 +174,20 @@ function renderVehicleDetail(vehicleId) {
       location.hash = `#timeline/${vehicleId}/0`;
     },
     onSelectFix: (idx) => { location.hash = `#fix/${vehicleId}/${idx}`; },
+    onUploadCover: (file) => handleCoverUpload(v, file),
+    onSelectTask: (idx) => { location.hash = `#task/${vehicleId}/${idx}`; },
+    onAddTask: () => {
+      if (!v.tasks) v.tasks = [];
+      v.tasks.push({ title: '', order: v.tasks.length + 1, completed: false });
+      State.dirty = true;
+      location.hash = `#task/${vehicleId}/${v.tasks.length - 1}`;
+    },
+    onToggleTask: (idx) => {
+      if (!v.tasks || !v.tasks[idx]) return;
+      v.tasks[idx].completed = !v.tasks[idx].completed;
+      State.dirty = true;
+      renderVehicleDetail(vehicleId);
+    },
     onAddFix: () => {
       if (!v.completedFixes) v.completedFixes = [];
       v.completedFixes.push({ title: '', image: '', link: '' });
@@ -214,6 +252,63 @@ function renderFixEdit(vehicleId, fixIdx) {
       location.hash = `#vehicle/${vehicleId}`;
     },
   });
+}
+
+// --- Task Edit ---
+
+function renderTaskEdit(vehicleId, taskIdx) {
+  const v = State.vehicles.find(v => v.id === vehicleId);
+  if (!v || !v.tasks || !v.tasks[taskIdx]) { location.hash = `#vehicle/${vehicleId}`; return; }
+
+  $('backBtn').classList.remove('hidden');
+  $('backBtn').onclick = () => { location.hash = `#vehicle/${vehicleId}`; };
+  $('headerTitle').textContent = 'Task';
+
+  const saveBtn = $('saveBtn');
+  if (State.dirty) {
+    saveBtn.classList.remove('hidden');
+    saveBtn.onclick = saveToS3;
+  }
+
+  ui.renderTaskEdit($('app'), v, taskIdx, {
+    onSave: (data) => {
+      v.tasks[taskIdx] = { title: data.title, order: data.order, completed: data.completed };
+      State.dirty = true;
+      showToast('Task updated (save to publish)');
+      location.hash = `#vehicle/${vehicleId}`;
+    },
+    onDelete: () => {
+      v.tasks.splice(taskIdx, 1);
+      State.dirty = true;
+      showToast('Task deleted');
+      location.hash = `#vehicle/${vehicleId}`;
+    },
+  });
+}
+
+// --- Cover Photo Upload ---
+
+async function handleCoverUpload(vehicle, file) {
+  const container = $('app');
+  const imgSlug = vehicleImageSlug(vehicle);
+
+  try {
+    ui.showCoverUploadProgress(container, 0);
+    const { uploadUrl, cdnUrl } = await api.getCoverUploadUrl(imgSlug);
+
+    await api.uploadFileToS3(uploadUrl, file, (pct) => {
+      ui.showCoverUploadProgress(container, pct);
+    });
+
+    vehicle.photo = cdnUrl;
+    State.dirty = true;
+    ui.hideCoverUploadProgress(container);
+    showToast('Cover photo uploaded');
+    renderVehicleDetail(vehicle.id);
+  } catch (err) {
+    ui.hideCoverUploadProgress(container);
+    showToast(err.message || 'Cover upload failed', 'error');
+  }
 }
 
 // --- Photo Upload ---

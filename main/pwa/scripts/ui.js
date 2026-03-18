@@ -57,7 +57,7 @@ export function renderLogin(container, { onLogin, apiBase }) {
 
 // --- Vehicle List View ---
 
-export function renderVehicleList(container, vehicles, { onSelect }) {
+export function renderVehicleList(container, vehicles, { onSelect, onAddVehicle }) {
   const sorted = [...vehicles].sort((a, b) => (a.order || 0) - (b.order || 0));
 
   container.innerHTML = `
@@ -67,12 +67,15 @@ export function renderVehicleList(container, vehicles, { onSelect }) {
         <span class="text-xs text-slate-400">${vehicles.length} vehicles</span>
       </div>
       ${sorted.map(v => vehicleCard(v)).join('')}
+      <button id="addVehicleBtn" class="w-full py-3 rounded-xl border border-dashed border-slate-700 text-aqua font-semibold text-sm active:scale-95 transition-transform">+ Add Vehicle</button>
     </div>
   `;
 
   container.querySelectorAll('[data-vehicle-id]').forEach(card => {
     card.addEventListener('click', () => onSelect(card.dataset.vehicleId));
   });
+
+  container.querySelector('#addVehicleBtn').addEventListener('click', onAddVehicle);
 }
 
 function vehicleCard(v) {
@@ -111,10 +114,11 @@ function vehicleCard(v) {
 
 // --- Vehicle Detail View ---
 
-export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix }) {
+export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask }) {
   const v = vehicle;
   const history = v.history || [];
   const fixes = v.completedFixes || [];
+  const tasks = [...(v.tasks || [])].sort((a, b) => (a.order || 0) - (b.order || 0));
 
   container.innerHTML = `
     <div class="view-enter px-4 py-4 space-y-4">
@@ -158,10 +162,21 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
           <span class="text-xs text-slate-400">Next Fix</span>
           <input id="metaNextFix" value="${esc(v.nextFix)}" class="mt-1 w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:border-aqua focus:outline-none">
         </label>
-        <label class="block">
-          <span class="text-xs text-slate-400">Cover Photo URL</span>
-          <input id="metaPhoto" value="${esc(v.photo)}" class="mt-1 w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:border-aqua focus:outline-none">
-        </label>
+        <div>
+          <span class="text-xs text-slate-400">Cover Photo</span>
+          <div class="mt-1 flex gap-2">
+            <input id="metaPhoto" value="${esc(v.photo)}" class="flex-1 px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:border-aqua focus:outline-none text-sm" readonly>
+            <label class="flex-shrink-0 px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-aqua font-semibold text-sm cursor-pointer active:scale-95 transition-transform">
+              <svg class="w-5 h-5 inline-block mr-1 -mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+              Upload
+              <input id="coverPhotoInput" type="file" accept="image/*" class="hidden">
+            </label>
+          </div>
+          <div id="coverUploadStatus" class="hidden mt-2">
+            <p id="coverUploadText" class="text-xs text-slate-400"></p>
+            <div class="upload-progress"><div id="coverUploadBar" class="upload-progress-bar" style="width: 0%"></div></div>
+          </div>
+        </div>
 
         <div class="flex gap-4 pt-1">
           <label class="flex items-center gap-2 text-sm">
@@ -187,6 +202,16 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
         </div>
         ${history.length === 0 ? '<p class="text-sm text-slate-500">No timeline entries yet</p>' : ''}
         ${history.map((h, i) => timelineCard(h, i)).join('')}
+      </div>
+
+      <!-- Tasks -->
+      <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Tasks</h3>
+          <button id="addTaskBtn" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-aqua font-semibold active:scale-95 transition-transform">+ Add</button>
+        </div>
+        ${tasks.length === 0 ? '<p class="text-sm text-slate-500">No tasks yet</p>' : ''}
+        ${tasks.map((t, i) => taskCard(t, i)).join('')}
       </div>
 
       <!-- Completed Fixes -->
@@ -232,6 +257,30 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
 
   // Bind add fix
   container.querySelector('#addFixBtn').addEventListener('click', onAddFix);
+
+  // Bind task clicks
+  container.querySelectorAll('[data-task-idx]').forEach(card => {
+    card.addEventListener('click', () => onSelectTask(parseInt(card.dataset.taskIdx)));
+  });
+
+  // Bind task toggle checkboxes
+  container.querySelectorAll('[data-toggle-task]').forEach(cb => {
+    cb.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onToggleTask(parseInt(cb.dataset.toggleTask));
+    });
+  });
+
+  // Bind add task
+  container.querySelector('#addTaskBtn').addEventListener('click', onAddTask);
+
+  // Bind cover photo upload
+  const coverInput = container.querySelector('#coverPhotoInput');
+  if (coverInput) {
+    coverInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) onUploadCover(e.target.files[0]);
+    });
+  }
 }
 
 function timelineCard(h, idx) {
@@ -259,6 +308,21 @@ function fixCard(fx, idx) {
       </div>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-semibold truncate">${esc(title)}</p>
+      </div>
+      <svg class="w-4 h-4 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </div>
+  `;
+}
+
+function taskCard(t, idx) {
+  const done = t.completed || false;
+  return `
+    <div data-task-idx="${idx}" class="card-press cursor-pointer flex items-center gap-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
+      <div data-toggle-task="${idx}" class="flex-shrink-0 w-6 h-6 rounded border ${done ? 'bg-aqua border-aqua' : 'border-slate-600'} flex items-center justify-center cursor-pointer">
+        ${done ? '<svg class="w-4 h-4 text-slate-900" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm ${done ? 'line-through text-slate-500' : 'font-semibold'} truncate">${esc(t.title || 'Untitled task')}</p>
       </div>
       <svg class="w-4 h-4 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
     </div>
@@ -405,6 +469,21 @@ export function renderTimelineEntry(container, vehicle, entryIdx, { onSave, onDe
   });
 }
 
+export function showCoverUploadProgress(container, percent) {
+  const status = container.querySelector('#coverUploadStatus');
+  const text = container.querySelector('#coverUploadText');
+  const bar = container.querySelector('#coverUploadBar');
+  if (!status) return;
+  status.classList.remove('hidden');
+  text.textContent = 'Uploading cover photo...';
+  bar.style.width = `${Math.round(percent * 100)}%`;
+}
+
+export function hideCoverUploadProgress(container) {
+  const status = container.querySelector('#coverUploadStatus');
+  if (status) status.classList.add('hidden');
+}
+
 export function showUploadProgress(container, current, total, percent) {
   const status = container.querySelector('#uploadStatus');
   const text = container.querySelector('#uploadText');
@@ -473,6 +552,57 @@ export function renderFixEdit(container, vehicle, fixIdx, { onSave, onDelete }) 
 
   container.querySelector('#deleteFixBtn').addEventListener('click', () => {
     if (confirm('Delete this completed fix?')) onDelete();
+  });
+}
+
+// --- Task Edit View ---
+
+export function renderTaskEdit(container, vehicle, taskIdx, { onSave, onDelete }) {
+  const tasks = vehicle.tasks || [];
+  const task = tasks[taskIdx];
+  if (!task) { container.innerHTML = '<p class="p-4 text-red-400">Task not found</p>'; return; }
+
+  container.innerHTML = `
+    <div class="view-enter px-4 py-4 space-y-4">
+      <div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-3">
+        <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Task</h3>
+
+        <label class="block">
+          <span class="text-xs text-slate-400">Title</span>
+          <input id="taskTitle" value="${esc(task.title)}"
+            class="mt-1 w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:border-aqua focus:outline-none">
+        </label>
+        <label class="block">
+          <span class="text-xs text-slate-400">Order</span>
+          <input id="taskOrder" type="number" value="${task.order || 0}"
+            class="mt-1 w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:border-aqua focus:outline-none">
+        </label>
+        <label class="flex items-center gap-2 text-sm pt-1">
+          <input id="taskCompleted" type="checkbox" ${task.completed ? 'checked' : ''} class="w-5 h-5 rounded bg-slate-800 border-slate-600 text-aqua focus:ring-aqua">
+          <span>Completed</span>
+        </label>
+
+        <button id="saveTaskBtn" class="w-full py-3 rounded-lg bg-aqua text-slate-900 font-semibold text-sm active:scale-95 transition-transform">
+          Save Task
+        </button>
+      </div>
+
+      <button id="deleteTaskBtn" class="w-full py-3 rounded-lg bg-red-900/30 border border-red-800/50 text-red-400 font-semibold text-sm active:scale-95 transition-transform">
+        Delete Task
+      </button>
+    </div>
+  `;
+
+  container.querySelector('#saveTaskBtn').addEventListener('click', () => {
+    onSave({
+      title: container.querySelector('#taskTitle').value,
+      order: parseInt(container.querySelector('#taskOrder').value) || 0,
+      completed: container.querySelector('#taskCompleted').checked,
+    });
+  });
+
+  container.querySelector('#deleteTaskBtn').addEventListener('click', () => {
+    if (confirm('Delete this task?')) onDelete();
   });
 }
 
