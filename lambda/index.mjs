@@ -38,6 +38,7 @@ export async function handler(event) {
     if (path === '/api/vehicles/save-url' && method === 'POST') return await handleSaveUrl();
     if (path === '/api/vehicles/confirm-save' && method === 'POST') return await handleConfirmSave();
     if (path === '/api/upload-urls' && method === 'POST') return await handleUploadUrls(event);
+    if (path === '/api/cover-upload-url' && method === 'POST') return await handleCoverUploadUrl(event);
 
     return respond(404, { error: 'Not found' });
   } catch (err) {
@@ -195,6 +196,25 @@ async function handleUploadUrls(event) {
   }
 
   return respond(200, { uploads });
+}
+
+// --- Cover Photo Upload URL ---
+
+async function handleCoverUploadUrl(event) {
+  const { vehicleSlug } = JSON.parse(event.body || '{}');
+  if (!vehicleSlug) {
+    return respond(400, { error: 'Missing required field: vehicleSlug' });
+  }
+
+  const key = `assets/images/${vehicleSlug}/cover.jpg`;
+  const command = new PutObjectCommand({
+    Bucket: BUCKET,
+    Key: key,
+    ContentType: 'image/jpeg',
+  });
+  const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 900 });
+
+  return respond(200, { uploadUrl, cdnUrl: key });
 }
 
 // --- Helpers ---

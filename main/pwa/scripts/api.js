@@ -84,6 +84,18 @@ export async function saveVehicles(vehicles) {
   return await confirmRes.json();
 }
 
+export async function getCoverUploadUrl(vehicleSlug) {
+  const base = getApiBase();
+  const res = await fetch(`${base}/api/cover-upload-url`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ vehicleSlug }),
+  });
+  if (res.status === 401) { logout(); throw new Error('Session expired'); }
+  if (!res.ok) throw new Error('Failed to get cover upload URL');
+  return await res.json();
+}
+
 export async function getUploadUrls(vehicleSlug, date, extensions) {
   const base = getApiBase();
   const res = await fetch(`${base}/api/upload-urls`, {
