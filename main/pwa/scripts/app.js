@@ -153,7 +153,10 @@ function renderVehicleDetail(vehicleId) {
     saveBtn.onclick = saveToS3;
   }
 
+  const allTags = [...new Set(State.vehicles.flatMap(v => v.tags || []))].sort();
+
   ui.renderVehicleDetail($('app'), v, {
+    allTags,
     onSaveMeta: (meta) => {
       v.name = meta.name;
       v.nickname = meta.nickname;
@@ -161,6 +164,7 @@ function renderVehicleDetail(vehicleId) {
       v.percentComplete = meta.percentComplete;
       v.nextFix = meta.nextFix;
       v.photo = meta.photo;
+      v.tags = meta.tags;
       v.flags = meta.flags;
       State.dirty = true;
       showToast('Details updated (save to publish)');

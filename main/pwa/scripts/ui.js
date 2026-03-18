@@ -114,7 +114,7 @@ function vehicleCard(v) {
 
 // --- Vehicle Detail View ---
 
-export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask }) {
+export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask, allTags }) {
   const v = vehicle;
   const history = v.history || [];
   const fixes = v.completedFixes || [];
@@ -178,6 +178,22 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
           </div>
         </div>
 
+        <!-- Tags -->
+        <div>
+          <span class="text-xs text-slate-400">Tags</span>
+          <div id="tagContainer" class="mt-1 flex flex-wrap gap-2">
+            ${(v.tags || []).map((t, i) => `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-200">${esc(t)}<button data-remove-tag="${i}" class="text-red-400 hover:text-red-300 ml-0.5">&times;</button></span>`).join('')}
+          </div>
+          <div class="mt-2 flex gap-2">
+            <input id="tagInput" list="tagSuggestions" placeholder="Add tag…"
+              class="flex-1 px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:border-aqua focus:outline-none">
+            <datalist id="tagSuggestions">
+              ${(allTags || []).filter(t => !(v.tags || []).includes(t)).map(t => `<option value="${esc(t)}">`).join('')}
+            </datalist>
+            <button id="addTagBtn" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-aqua font-semibold text-sm active:scale-95 transition-transform">+ Add</button>
+          </div>
+        </div>
+
         <div class="flex gap-4 pt-1">
           <label class="flex items-center gap-2 text-sm">
             <input id="metaFocus" type="checkbox" ${v.flags?.focus ? 'checked' : ''} class="w-5 h-5 rounded bg-slate-800 border-slate-600 text-aqua focus:ring-aqua">
@@ -235,12 +251,37 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
       percentComplete: parseInt(container.querySelector('#metaPercent').value) || 0,
       nextFix: container.querySelector('#metaNextFix').value,
       photo: container.querySelector('#metaPhoto').value,
+      tags: v.tags || [],
       flags: {
         focus: container.querySelector('#metaFocus').checked,
         nextUp: container.querySelector('#metaNextUp').checked,
       },
     });
   });
+
+  // Bind tag removal
+  container.querySelectorAll('[data-remove-tag]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const idx = parseInt(btn.dataset.removeTag);
+      if (!v.tags) return;
+      v.tags.splice(idx, 1);
+      renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask, allTags });
+    });
+  });
+
+  // Bind tag add
+  const tagInput = container.querySelector('#tagInput');
+  const addTagBtn = container.querySelector('#addTagBtn');
+  function addTag() {
+    const val = tagInput.value.trim().toLowerCase();
+    if (!val) return;
+    if (!v.tags) v.tags = [];
+    if (!v.tags.includes(val)) v.tags.push(val);
+    renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask, allTags });
+  }
+  addTagBtn.addEventListener('click', addTag);
+  tagInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
 
   // Bind timeline entry clicks
   container.querySelectorAll('[data-entry-idx]').forEach(card => {
