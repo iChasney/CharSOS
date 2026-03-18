@@ -29,6 +29,23 @@ function timelineRow(h, idx, vid){
   </li>`;
 }
 
+function taskSection(v){
+  const tasks = [...(v.tasks||[])].sort((a,b)=>(a.order||0)-(b.order||0));
+  if(!tasks.length) return '';
+  const done = tasks.filter(t=>t.completed).length;
+  const items = tasks.map(t=>{
+    const checked = t.completed;
+    return `<li class="flex items-center gap-2 text-sm">
+      <span class="flex-shrink-0 w-5 h-5 rounded border ${checked?'bg-aqua border-aqua':'border-slate-600'} flex items-center justify-center">
+        ${checked?'<svg class="w-3 h-3 text-slate-900" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>':''}
+      </span>
+      <span class="${checked?'line-through text-slate-500':'text-slate-300'}">${t.title||'Untitled'}</span>
+    </li>`;
+  }).join('');
+  return `<details class="mt-4"><summary class="cursor-pointer select-none font-semibold text-aqua">🔧 Tasks <span class="text-xs text-slate-400 font-normal">(${done}/${tasks.length} done)</span></summary>
+    <ul class="mt-3 space-y-2">${items}</ul></details>`;
+}
+
 function vehicleCard(v){
   const badge=statusClass(v.status,(v.completedFixes||[]).length);
   const nick=v.nickname?`<div class="text-sm text-slate-400">${v.nickname}</div>`:'';
@@ -47,6 +64,7 @@ function vehicleCard(v){
       <div class="mt-2 flex flex-wrap gap-2">${tags}</div>
       <p class="mt-3 text-sm"><span class="text-slate-400">Next fix:</span> <span class="font-semibold">${v.nextFix}</span></p>
       <div class="mt-3 h-2 bg-slate-800 rounded"><div class="h-2 bg-aqua rounded" style="width:${v.percentComplete||0}%"></div></div>
+      ${taskSection(v)}
       <details class="mt-4"><summary class="cursor-pointer select-none font-semibold text-aqua">📅 Timeline</summary>
         <ul class="mt-3 space-y-2">${hist}</ul></details>
       ${fixes?`<div class="mt-4"><p class="text-sm text-slate-400 mb-2">Completed fixes (tap to preview):</p><div class="grid grid-cols-3 gap-2">${fixes}</div></div>`:''}
@@ -83,7 +101,18 @@ const Lightbox = (()=>{
   return { bind, openSingle, openMany };
 })();
 
-function filterByStatus(list,s){ if(s==='inprogress') return list.filter(v=>(v.status||'').toLowerCase().includes('progress')||(v.status||'').toLowerCase().includes('rebuild')); if(s==='completed') return list.filter(v=>(v.completedFixes||[]).length>0||(v.status||'').toLowerCase().includes('complete')); if(s==='pending') return list.filter(v=>!((v.status||'').toLowerCase().includes('progress')||(v.completedFixes||[]).length>0)); return list; }
+function populateStatusFilter(data){
+  const statusEl = document.getElementById('statusFilter');
+  const statuses = [...new Set(data.map(v=>v.status).filter(Boolean))];
+  statuses.sort((a,b)=>a.localeCompare(b));
+  statuses.forEach(s=>{
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    statusEl.appendChild(opt);
+  });
+}
+function filterByStatus(list,s){ if(s==='all') return list; return list.filter(v=>v.status===s); }
 function sortVehicles(list,by){
   if(by==='order') return [...list].sort((a,b)=> (a.order ?? 9999) - (b.order ?? 9999));
   if(by==='progress') return [...list].sort((a,b)=>(b.percentComplete||0)-(a.percentComplete||0));
@@ -160,6 +189,7 @@ async function init(){
     });
   }
 
+  populateStatusFilter(data);
   applyFocusPanels(data);
   searchEl.addEventListener('input', render);
   statusEl.addEventListener('change', render);
