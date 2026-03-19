@@ -114,7 +114,7 @@ function vehicleCard(v) {
 
 // --- Vehicle Detail View ---
 
-export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask, allTags }) {
+export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask, onReorderTasks, allTags }) {
   const v = vehicle;
   const history = v.history || [];
   const fixes = v.completedFixes || [];
@@ -227,7 +227,9 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
           <button id="addTaskBtn" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-aqua font-semibold active:scale-95 transition-transform">+ Add</button>
         </div>
         ${tasks.length === 0 ? '<p class="text-sm text-slate-500">No tasks yet</p>' : ''}
-        ${tasks.map((t, i) => taskCard(t, i)).join('')}
+        <div id="taskList" class="space-y-2">
+          ${tasks.map((t, i) => taskCard(t, i)).join('')}
+        </div>
       </div>
 
       <!-- Completed Fixes -->
@@ -266,7 +268,7 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
       const idx = parseInt(btn.dataset.removeTag);
       if (!v.tags) return;
       v.tags.splice(idx, 1);
-      renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask, allTags });
+      renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask, onReorderTasks, allTags });
     });
   });
 
@@ -278,7 +280,7 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
     if (!val) return;
     if (!v.tags) v.tags = [];
     if (!v.tags.includes(val)) v.tags.push(val);
-    renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask, allTags });
+    renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEntry, onAddEntry, onSelectFix, onAddFix, onUploadCover, onSelectTask, onAddTask, onToggleTask, onReorderTasks, allTags });
   }
   addTagBtn.addEventListener('click', addTag);
   tagInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
@@ -314,6 +316,95 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
 
   // Bind add task
   container.querySelector('#addTaskBtn').addEventListener('click', onAddTask);
+
+  // Touch drag reorder for tasks
+  const taskList = container.querySelector('#taskList');
+  if (taskList) {
+    let dragItem = null;
+    let dragClone = null;
+    let startY = 0;
+    let offsetY = 0;
+    let items = [];
+    let placeholder = null;
+
+    taskList.querySelectorAll('[data-drag-handle]').forEach(handle => {
+      handle.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        dragItem = handle.closest('.task-item');
+        if (!dragItem) return;
+
+        items = [...taskList.querySelectorAll('.task-item')];
+        const rect = dragItem.getBoundingClientRect();
+        startY = e.touches[0].clientY;
+        offsetY = startY - rect.top;
+
+        // Create placeholder
+        placeholder = document.createElement('div');
+        placeholder.className = 'task-placeholder';
+        placeholder.style.height = rect.height + 'px';
+        dragItem.parentNode.insertBefore(placeholder, dragItem);
+
+        // Create floating clone
+        dragClone = dragItem.cloneNode(true);
+        dragClone.classList.add('task-dragging');
+        dragClone.style.width = rect.width + 'px';
+        dragClone.style.left = rect.left + 'px';
+        dragClone.style.top = rect.top + 'px';
+        document.body.appendChild(dragClone);
+
+        dragItem.style.display = 'none';
+      }, { passive: false });
+    });
+
+    taskList.addEventListener('touchmove', (e) => {
+      if (!dragClone || !placeholder) return;
+      e.preventDefault();
+      const y = e.touches[0].clientY;
+      dragClone.style.top = (y - offsetY) + 'px';
+
+      // Find which item we're hovering over
+      const centerY = y;
+      for (const item of items) {
+        if (item === dragItem) continue;
+        const r = item.getBoundingClientRect();
+        const midY = r.top + r.height / 2;
+        if (centerY < midY) {
+          taskList.insertBefore(placeholder, item);
+          return;
+        }
+      }
+      // Past all items — put at end
+      taskList.appendChild(placeholder);
+    }, { passive: false });
+
+    const endDrag = () => {
+      if (!dragClone) return;
+      // Determine new order from DOM positions (skip the hidden original)
+      const newOrder = [];
+      taskList.querySelectorAll('.task-item, .task-placeholder').forEach(el => {
+        if (el === dragItem) return; // skip hidden original
+        if (el === placeholder) {
+          newOrder.push(parseInt(dragItem.dataset.taskIdx));
+        } else if (el.dataset.taskIdx !== undefined) {
+          newOrder.push(parseInt(el.dataset.taskIdx));
+        }
+      });
+
+      // Clean up
+      dragClone.remove();
+      dragClone = null;
+      placeholder.remove();
+      placeholder = null;
+      dragItem.style.display = '';
+      dragItem = null;
+      items = [];
+
+      onReorderTasks(newOrder);
+    };
+
+    taskList.addEventListener('touchend', endDrag);
+    taskList.addEventListener('touchcancel', endDrag);
+  }
 
   // Bind cover photo upload
   const coverInput = container.querySelector('#coverPhotoInput');
@@ -358,7 +449,12 @@ function fixCard(fx, idx) {
 function taskCard(t, idx) {
   const done = t.completed || false;
   return `
-    <div data-task-idx="${idx}" class="card-press cursor-pointer flex items-center gap-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
+    <div data-task-idx="${idx}" class="task-item card-press cursor-pointer flex items-center gap-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
+      <div data-drag-handle class="flex-shrink-0 w-6 h-8 flex flex-col items-center justify-center gap-0.5 cursor-grab touch-none text-slate-500">
+        <span class="block w-4 h-0.5 bg-current rounded"></span>
+        <span class="block w-4 h-0.5 bg-current rounded"></span>
+        <span class="block w-4 h-0.5 bg-current rounded"></span>
+      </div>
       <div data-toggle-task="${idx}" class="flex-shrink-0 w-6 h-6 rounded border ${done ? 'bg-aqua border-aqua' : 'border-slate-600'} flex items-center justify-center cursor-pointer">
         ${done ? '<svg class="w-4 h-4 text-slate-900" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
       </div>

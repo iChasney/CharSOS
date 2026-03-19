@@ -112,6 +112,22 @@ input, select, textarea {
   border: 1px solid #334155;
 }
 
+/* Task drag reorder */
+.task-dragging {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0.9;
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.task-placeholder {
+  border-radius: 0.5rem;
+  border: 2px dashed #7fdde9;
+  background: rgba(127, 221, 233, 0.05);
+}
+
 /* Bottom nav active state */
 .nav-active {
   color: #7fdde9;
