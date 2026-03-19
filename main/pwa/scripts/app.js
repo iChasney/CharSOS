@@ -192,6 +192,15 @@ function renderVehicleDetail(vehicleId) {
       State.dirty = true;
       renderVehicleDetail(vehicleId);
     },
+    onReorderTasks: (newOrder) => {
+      // newOrder is an array of original task indices in the new visual order
+      const sorted = [...(v.tasks || [])].sort((a, b) => (a.order || 0) - (b.order || 0));
+      const reordered = newOrder.map(i => sorted[i]);
+      reordered.forEach((t, i) => { t.order = i + 1; });
+      v.tasks = reordered;
+      State.dirty = true;
+      renderVehicleDetail(vehicleId);
+    },
     onAddFix: () => {
       if (!v.completedFixes) v.completedFixes = [];
       v.completedFixes.push({ title: '', image: '', link: '' });
