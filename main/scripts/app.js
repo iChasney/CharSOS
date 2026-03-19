@@ -112,6 +112,14 @@ function populateStatusFilter(data){
     statusEl.appendChild(opt);
   });
 }
+function applyStats(data){
+  const total = data.length;
+  const onRoad = data.filter(v=>(v.status||'').toLowerCase().includes('mot')).length;
+  const running = data.filter(v=>(v.status||'').toLowerCase().includes('running')).length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statOnRoad').textContent = onRoad;
+  document.getElementById('statRunning').textContent = running;
+}
 function filterByStatus(list,s){ if(s==='all') return list; return list.filter(v=>v.status===s); }
 function sortVehicles(list,by){
   if(by==='order') return [...list].sort((a,b)=> (a.order ?? 9999) - (b.order ?? 9999));
@@ -190,6 +198,7 @@ async function init(){
   }
 
   populateStatusFilter(data);
+  applyStats(data);
   applyFocusPanels(data);
   searchEl.addEventListener('input', render);
   statusEl.addEventListener('change', render);

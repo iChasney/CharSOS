@@ -58,7 +58,22 @@
     </div>
   </header>
 
-  <section class="max-w-7xl mx-auto px-4 mt-6 grid md:grid-cols-2 gap-4">
+  <section class="max-w-7xl mx-auto px-4 mt-6 grid grid-cols-3 gap-4">
+    <div class="glass rounded-2xl p-4 border border-slate-800 text-center">
+      <p id="statTotal" class="text-3xl font-extrabold text-aqua">—</p>
+      <p class="text-xs text-slate-400 mt-1">Total Vehicles</p>
+    </div>
+    <div class="glass rounded-2xl p-4 border border-slate-800 text-center">
+      <p id="statOnRoad" class="text-3xl font-extrabold text-green-400">—</p>
+      <p class="text-xs text-slate-400 mt-1">On the Road</p>
+    </div>
+    <div class="glass rounded-2xl p-4 border border-slate-800 text-center">
+      <p id="statRunning" class="text-3xl font-extrabold text-yellow-400">—</p>
+      <p class="text-xs text-slate-400 mt-1">Running</p>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 mt-4 grid md:grid-cols-2 gap-4">
     <div class="glass rounded-2xl p-5 border border-slate-800">
       <h2 class="text-lg font-bold text-aqua">Current Focus</h2>
       <p id="focusText" class="text-xl mt-1">Loading…</p>
