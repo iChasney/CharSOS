@@ -3,7 +3,7 @@ function getParams(){
   return {
     q: p.get('q') || '',
     status: p.get('status') || 'all',
-    sort: p.get('sort') || 'order',
+    sort: p.get('sort') || 'recent',
     car: p.get('car') || null
   };
 }
@@ -27,6 +27,12 @@ function timelineRow(h, idx, vid){
     <span class="font-semibold">${h.date||''}</span> — ${h.event||''}
     ${btn}
   </li>`;
+}
+
+function nextTask(v){
+  const tasks = [...(v.tasks||[])].sort((a,b)=>(a.order||0)-(b.order||0));
+  const t = tasks.find(t=>!t.completed && t.title);
+  return t ? t.title : 'No tasks remaining';
 }
 
 function taskSection(v){
@@ -62,7 +68,7 @@ function vehicleCard(v){
       </header>
       ${nick}
       <div class="mt-2 flex flex-wrap gap-2">${tags}</div>
-      <p class="mt-3 text-sm"><span class="text-slate-400">Next fix:</span> <span class="font-semibold">${v.nextFix}</span></p>
+      <p class="mt-3 text-sm"><span class="text-slate-400">Next fix:</span> <span class="font-semibold">${nextTask(v)}</span></p>
       <div class="mt-3 h-2 bg-slate-800 rounded"><div class="h-2 bg-aqua rounded" style="width:${v.percentComplete||0}%"></div></div>
       ${taskSection(v)}
       <details class="mt-4"><summary class="cursor-pointer select-none font-semibold text-aqua">📅 Timeline</summary>
@@ -121,17 +127,22 @@ function applyStats(data){
   document.getElementById('statRunning').textContent = running;
 }
 function filterByStatus(list,s){ if(s==='all') return list; return list.filter(v=>v.status===s); }
+function latestTimelineDate(v){
+  if(!v.history||!v.history.length) return '';
+  return v.history.reduce((max,h)=>(h.date&&h.date>max?h.date:max),'');
+}
 function sortVehicles(list,by){
+  if(by==='recent') return [...list].sort((a,b)=>latestTimelineDate(b).localeCompare(latestTimelineDate(a)));
   if(by==='order') return [...list].sort((a,b)=> (a.order ?? 9999) - (b.order ?? 9999));
   if(by==='progress') return [...list].sort((a,b)=>(b.percentComplete||0)-(a.percentComplete||0));
   return [...list].sort((a,b)=>a.name.localeCompare(b.name));
 }
 function applyFocusPanels(data){ const f=data.find(v=>v.flags&&v.flags.focus), n=data.find(v=>v.flags&&v.flags.nextUp);
   const ft=document.getElementById('focusText'), nt=document.getElementById('nextUpText'), fp=document.getElementById('focusProgress');
-  if(f){ ft.textContent=`${f.name}${f.nickname?' ('+f.nickname+')':''}: ${f.nextFix}`; fp.style.width=(f.percentComplete||0)+'%'; }
-  else if(data.length){ ft.textContent=`${data[0].name}: ${data[0].nextFix}`; fp.style.width=(data[0].percentComplete||0)+'%'; }
-  if(n){ nt.textContent=`${n.name}${n.nickname?' ('+n.nickname+')':''}: ${n.nextFix}`; }
-  else if(data.length>1){ nt.textContent=`${data[1].name}: ${data[1].nextFix}`; }
+  if(f){ ft.textContent=`${f.name}${f.nickname?' ('+f.nickname+')':''}: ${nextTask(f)}`; fp.style.width=(f.percentComplete||0)+'%'; }
+  else if(data.length){ ft.textContent=`${data[0].name}: ${nextTask(data[0])}`; fp.style.width=(data[0].percentComplete||0)+'%'; }
+  if(n){ nt.textContent=`${n.name}${n.nickname?' ('+n.nickname+')':''}: ${nextTask(n)}`; }
+  else if(data.length>1){ nt.textContent=`${data[1].name}: ${nextTask(data[1])}`; }
 }
 function handleDeepLink(){
   const params = getParams();
