@@ -123,7 +123,6 @@ function renderVehicleList() {
         photo: '',
         status: 'Unknown',
         percentComplete: 0,
-        nextFix: '',
         tags: [],
         flags: { focus: false, nextUp: false },
         history: [],
@@ -162,7 +161,6 @@ function renderVehicleDetail(vehicleId) {
       v.nickname = meta.nickname;
       v.status = meta.status;
       v.percentComplete = meta.percentComplete;
-      v.nextFix = meta.nextFix;
       v.photo = meta.photo;
       v.tags = meta.tags;
       v.flags = meta.flags;

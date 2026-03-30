@@ -2,6 +2,12 @@
 
 import { statusBadgeClass, todayISO, vehicleImageSlug, formatDateForFilename, showToast } from './utils.js';
 
+function nextTask(v) {
+  const tasks = [...(v.tasks || [])].sort((a, b) => (a.order || 0) - (b.order || 0));
+  const t = tasks.find(t => !t.completed && t.title);
+  return t ? t.title : 'No tasks remaining';
+}
+
 // --- Login View ---
 
 export function renderLogin(container, { onLogin, apiBase }) {
@@ -105,7 +111,7 @@ function vehicleCard(v) {
           </div>
           <span class="text-[10px] text-slate-400">${pct}%</span>
         </div>
-        ${v.nextFix ? `<p class="text-[11px] text-slate-400 mt-1 truncate">Next: ${v.nextFix}</p>` : ''}
+        ${nextTask(v) !== 'No tasks remaining' ? `<p class="text-[11px] text-slate-400 mt-1 truncate">Next: ${nextTask(v)}</p>` : ''}
       </div>
       <svg class="w-4 h-4 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
     </div>
@@ -158,10 +164,6 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
             <input id="metaPercent" type="number" min="0" max="100" value="${v.percentComplete || 0}" class="mt-1 w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:border-aqua focus:outline-none">
           </label>
         </div>
-        <label class="block">
-          <span class="text-xs text-slate-400">Next Fix</span>
-          <input id="metaNextFix" value="${esc(v.nextFix)}" class="mt-1 w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-100 focus:border-aqua focus:outline-none">
-        </label>
         <div>
           <span class="text-xs text-slate-400">Cover Photo</span>
           <div class="mt-1 flex gap-2">
@@ -251,7 +253,6 @@ export function renderVehicleDetail(container, vehicle, { onSaveMeta, onSelectEn
       nickname: container.querySelector('#metaNickname').value,
       status: container.querySelector('#metaStatus').value,
       percentComplete: parseInt(container.querySelector('#metaPercent').value) || 0,
-      nextFix: container.querySelector('#metaNextFix').value,
       photo: container.querySelector('#metaPhoto').value,
       tags: v.tags || [],
       flags: {
