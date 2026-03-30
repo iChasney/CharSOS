@@ -7,7 +7,6 @@
     "photo": "assets/images/poppy/cover.jpg",
     "status": "Running with MOT",
     "percentComplete": 90,
-    "nextFix": "Swap rear subframe",
     "tags": [
       "mini",
       "engine",
@@ -30,7 +29,29 @@
         "event": "Engine removed and teardown started"
       }
     ],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Swap out the header tank",
+        "order": 1,
+        "completed": false
+      },
+      {
+        "title": "Swap the power steering pump",
+        "order": 2,
+        "completed": false
+      },
+      {
+        "title": "Refurbish the alloy wheels",
+        "order": 3,
+        "completed": false
+      },
+      {
+        "title": "Swap the rear subframe and suspension",
+        "order": 4,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "landrover",
@@ -40,7 +61,6 @@
     "photo": "assets/images/linda/cover.jpg",
     "status": "Running with MOT",
     "percentComplete": 80,
-    "nextFix": "Change anti roll bar drop links",
     "tags": [
       "electrics",
       "landrover",
@@ -49,7 +69,7 @@
     ],
     "flags": {
       "focus": false,
-      "nextUp": true
+      "nextUp": false
     },
     "history": [
       {
@@ -195,39 +215,136 @@
     "photo": "assets/images/harry/cover.jpg",
     "status": "Running",
     "percentComplete": 80,
-    "nextFix": "Wire up and fit electric fan",
     "tags": [
       "clutch slave",
       "water pump",
       "electrics"
     ],
     "flags": {
-      "focus": true,
+      "focus": false,
       "nextUp": false
     },
     "history": [],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Work out where the big oil leak is",
+        "order": 1,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "mc-52",
     "order": 4,
-    "name": "MC-52 Sport 1000 Race Car",
+    "name": "MC-52 Sports 1000 Race Car",
     "nickname": "",
     "photo": "assets/images/mc-52/cover.jpg",
     "status": "In Progress",
     "percentComplete": 60,
-    "nextFix": "Extending wire harness and wiring fuse box",
     "tags": [
       "rebuild",
       "electrics",
       "repaint"
     ],
     "flags": {
-      "focus": false,
+      "focus": true,
       "nextUp": false
     },
-    "history": [],
-    "completedFixes": []
+    "history": [
+      {
+        "date": "2016-03-30",
+        "event": "Making a race seat from expanding foam",
+        "images": [
+          "assets/images/mc-52/21-03-2026-1.jpg",
+          "assets/images/mc-52/21-03-2026-2.jpg",
+          "assets/images/mc-52/21-03-2026-3.jpg",
+          "assets/images/mc-52/21-03-2026-4.jpg"
+        ]
+      },
+      {
+        "date": "2016-03-20",
+        "event": "Purchased the car",
+        "images": [
+          "assets/images/mc-52/19-03-2026-1.jpg"
+        ]
+      },
+      {
+        "date": "2026-03-10",
+        "event": "Finished main power wiring",
+        "images": [
+          "assets/images/mc-52/10-03-2026-1.jpg"
+        ]
+      }
+    ],
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Rejoin the wiring loom",
+        "order": 1,
+        "completed": false
+      },
+      {
+        "title": "Mount the battery",
+        "order": 2,
+        "completed": false
+      },
+      {
+        "title": "Wire the main switch box",
+        "order": 3,
+        "completed": false
+      },
+      {
+        "title": "Wire the main relay and fusebox",
+        "order": 4,
+        "completed": false
+      },
+      {
+        "title": "Wire up the data logger",
+        "order": 5,
+        "completed": false
+      },
+      {
+        "title": "Wire up the dashboard switched",
+        "order": 6,
+        "completed": false
+      },
+      {
+        "title": "Make a dashboard switch panel",
+        "order": 7,
+        "completed": false
+      },
+      {
+        "title": "Plumb in the fire extinguisher",
+        "order": 8,
+        "completed": false
+      },
+      {
+        "title": "For the brake bias adjuster",
+        "order": 9,
+        "completed": false
+      },
+      {
+        "title": "Reroute the coolant pipes",
+        "order": 10,
+        "completed": false
+      },
+      {
+        "title": "",
+        "order": 11,
+        "completed": false
+      },
+      {
+        "title": "Finish strippping the bodywork",
+        "order": 12,
+        "completed": false
+      },
+      {
+        "title": "Flat and prime the body",
+        "order": 13,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "gsxr-750",
@@ -237,7 +354,6 @@
     "photo": "assets/images/gsx-r750/cover.jpg",
     "status": "Pending",
     "percentComplete": 0,
-    "nextFix": "Engine rebuild",
     "tags": [
       "service",
       "engine rebuild"
@@ -247,7 +363,14 @@
     "flags": {
       "focus": false,
       "nextUp": false
-    }
+    },
+    "tasks": [
+      {
+        "title": "Remove the engine",
+        "order": 1,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "fe-35",
@@ -257,7 +380,6 @@
     "photo": "assets/images/fe-35/cover.jpg",
     "status": "In Progress",
     "percentComplete": 40,
-    "nextFix": "Making cylinder head studs",
     "tags": [
       "rebuild",
       "engine rebuild",
@@ -268,7 +390,14 @@
       "nextUp": false
     },
     "history": [],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Making cylinder head studs",
+        "order": 1,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "vivaro",
@@ -277,8 +406,7 @@
     "nickname": "Vangelina Jolie",
     "photo": "assets/images/vangelina/cover.jpg",
     "status": "Running with MOT",
-    "percentComplete": 60,
-    "nextFix": "Fix side door lock",
+    "percentComplete": 90,
     "tags": [
       "engine rebuild"
     ],
@@ -287,7 +415,19 @@
       "nextUp": false
     },
     "history": [],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Welding jacking point",
+        "order": 1,
+        "completed": true
+      },
+      {
+        "title": "Swap the turbo",
+        "order": 2,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "audi-a4-cabriolet",
@@ -295,9 +435,8 @@
     "name": "Audi A4 1.8T Cabriolet",
     "nickname": "Patch",
     "photo": "assets/images/audi-a4/cover.jpg",
-    "status": "Running with MOT",
+    "status": "Running",
     "percentComplete": 60,
-    "nextFix": "Fix rear roof starage box",
     "tags": [
       "roof",
       "interior",
@@ -308,7 +447,39 @@
       "nextUp": false
     },
     "history": [],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Fix rear roof storage box",
+        "order": 1,
+        "completed": false
+      },
+      {
+        "title": "Paint and replace front wings",
+        "order": 2,
+        "completed": false
+      },
+      {
+        "title": "Paint the bonnet",
+        "order": 3,
+        "completed": false
+      },
+      {
+        "title": "Paint the mirror cover",
+        "order": 4,
+        "completed": false
+      },
+      {
+        "title": "Service",
+        "order": 5,
+        "completed": false
+      },
+      {
+        "title": "Fix the cup holder",
+        "order": 6,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "blue-fazer",
@@ -318,7 +489,6 @@
     "photo": "assets/images/blue-fazer/cover.jpg",
     "status": "Backlog",
     "percentComplete": 20,
-    "nextFix": "Engine installation",
     "tags": [
       "rebuild"
     ],
@@ -327,7 +497,14 @@
       "nextUp": false
     },
     "history": [],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Engine installation",
+        "order": 1,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "red-fazer",
@@ -337,7 +514,6 @@
     "photo": "assets/images/red-fazer/cover.jpg",
     "status": "Backlog",
     "percentComplete": 0,
-    "nextFix": "Teardown",
     "tags": [
       "rebuild",
       "repaint"
@@ -347,7 +523,14 @@
       "nextUp": false
     },
     "history": [],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Teardown",
+        "order": 1,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "zzr600",
@@ -357,7 +540,6 @@
     "photo": "assets/images/zzr600/cover.jpg",
     "status": "Backlog",
     "percentComplete": 20,
-    "nextFix": "Cylinder head gasket",
     "tags": [
       "rebuild",
       "repaint"
@@ -367,7 +549,14 @@
       "nextUp": false
     },
     "history": [],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Cylinder head gasket",
+        "order": 1,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "yellow-mini",
@@ -375,9 +564,8 @@
     "name": "Mini Cooper - Yellow",
     "nickname": "",
     "photo": "assets/images/yellow-mini/cover.jpg",
-    "status": "Pending",
+    "status": "Backlog",
     "percentComplete": 0,
-    "nextFix": "Change the clutch",
     "tags": [
       "clutch",
       "flywheel"
@@ -387,7 +575,14 @@
       "nextUp": false
     },
     "history": [],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Change the clutch",
+        "order": 1,
+        "completed": false
+      }
+    ]
   },
   {
     "id": "green-dolomite",
@@ -397,7 +592,6 @@
     "photo": "assets/images/green-dolomite/cover.jpg",
     "status": "Backlog",
     "percentComplete": 0,
-    "nextFix": "Get running",
     "tags": [
       "service"
     ],
@@ -406,6 +600,134 @@
       "nextUp": false
     },
     "history": [],
-    "completedFixes": []
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Get running",
+        "order": 1,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "vehicle-1773868369971",
+    "order": 14,
+    "name": "Audi A3",
+    "nickname": "Heidi’s Jalopy",
+    "photo": "assets/images/heidi-s-jalopy/cover.jpg",
+    "status": "Running with MOT",
+    "percentComplete": 95,
+    "tags": [
+      "suspension",
+      "crash",
+      "bumper"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": true
+    },
+    "history": [
+      {
+        "date": "2026-03-22",
+        "event": "Changed the front wheel bearings and hubs",
+        "images": [
+          "assets/images/heidi-s-jalopy/22-03-2026-1.jpg",
+          "assets/images/heidi-s-jalopy/22-03-2026-2.jpg",
+          "assets/images/heidi-s-jalopy/22-03-2026-3.jpg"
+        ]
+      },
+      {
+        "date": "2026-02-08",
+        "event": "Swapping out suspension, broken outriggers, anti roll bar and drop links",
+        "images": [
+          "assets/images/heidi-s-jalopy/18-03-2026-9.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-10.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-11.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-12.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-13.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-14.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-15.jpg"
+        ]
+      },
+      {
+        "date": "2026-03-18",
+        "event": "Replacing the crash bar and rear bumper",
+        "images": [
+          "assets/images/heidi-s-jalopy/18-03-2026-2.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-3.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-4.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-5.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-6.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-7.jpg",
+          "assets/images/heidi-s-jalopy/18-03-2026-8.jpg"
+        ]
+      },
+      {
+        "date": "2025-05-23",
+        "event": "Picking up after the crash",
+        "images": [
+          "assets/images/heidi-s-jalopy/18-03-2026-1.jpg"
+        ]
+      }
+    ],
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Fix the clonking noises",
+        "order": 1,
+        "completed": true
+      },
+      {
+        "title": "Change the front wheel bearings",
+        "order": 2,
+        "completed": true
+      },
+      {
+        "title": "Fit the dash cam",
+        "order": 3,
+        "completed": false
+      },
+      {
+        "title": "Change the clutch",
+        "order": 4,
+        "completed": false
+      }
+    ]
+  },
+  {
+    "id": "vehicle-1774298153665",
+    "order": 15,
+    "name": "Ford Fiesta",
+    "nickname": "",
+    "photo": "assets/images/vehicle-1774298153665/cover.jpg",
+    "status": "Backlog",
+    "percentComplete": 0,
+    "tags": [
+      "engine",
+      "paint",
+      "bodywork"
+    ],
+    "flags": {
+      "focus": false,
+      "nextUp": false
+    },
+    "history": [
+      {
+        "date": "2025-12-08",
+        "event": "Acquired it from Dad after a catastrophic engine failure",
+        "images": [
+          "assets/images/vehicle-1774298153665/08-12-2025-1.jpg",
+          "assets/images/vehicle-1774298153665/08-12-2025-2.jpg"
+        ]
+      }
+    ],
+    "completedFixes": [],
+    "tasks": [
+      {
+        "title": "Remove the engine",
+        "order": 1,
+        "completed": false
+      }
+    ]
   }
 ]
