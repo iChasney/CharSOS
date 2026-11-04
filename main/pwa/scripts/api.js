@@ -109,6 +109,9 @@ export async function getUploadUrls(vehicleSlug, date, extensions) {
 }
 
 export function uploadFileToS3(presignedUrl, file, onProgress) {
+  if (!file || file.size === 0) {
+    return Promise.reject(new Error(`Photo "${file?.name || 'unknown'}" is empty (0 bytes) — not uploaded`));
+  }
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.upload.addEventListener('progress', (e) => {

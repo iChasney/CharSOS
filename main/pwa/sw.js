@@ -30,9 +30,13 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // API calls and uploads: network only
-  if (url.pathname.startsWith('/api/') || event.request.method !== 'GET') {
-    event.respondWith(fetch(event.request));
+  // API calls, uploads and cross-origin requests (e.g. S3 pre-signed PUTs):
+  // don't intercept at all — let the browser handle them natively.
+  // Re-issuing them via fetch(event.request) causes iOS Safari to drop
+  // File/Blob request bodies, producing 0-byte objects in S3.
+  if (url.origin !== self.location.origin ||
+      url.pathname.startsWith('/api/') ||
+      event.request.method !== 'GET') {
     return;
   }
 
